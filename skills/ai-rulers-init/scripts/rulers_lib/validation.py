@@ -249,6 +249,7 @@ def inspect_project(
     *,
     project_root: Path | str,
     rulers_dir: str,
+    navigation_exists=Path.is_file,
 ) -> ProjectInspection:
     """Single authoritative project inspection returning structured results."""
     issues: list[ValidationIssue] = []
@@ -428,7 +429,10 @@ def inspect_project(
 
         from .rule_loading import validate_links, validate_index_routes
         for relative, metadata in (state.get("managed_files") or {}).items():
-            if not isinstance(metadata, Mapping) or metadata.get("ownership") != "managed" or not relative.endswith(".md"):
+            if not isinstance(metadata, Mapping) or not relative.endswith(".md"):
+                continue
+            ownership = metadata.get("ownership")
+            if ownership not in {"managed", "project-generated"}:
                 continue
             scope = _scope_for_managed_path(relative, state)
             if scope in ("entry", "profile", None):
@@ -436,9 +440,10 @@ def inspect_project(
             source = layout.project_root / relative
             if not source.is_file() or source.is_symlink() or not source.resolve().is_relative_to(layout.rulers_root):
                 continue
-            found = validate_rule_metadata_text(source.read_text(encoding="utf-8"), relative)
+            # Historical project-generated rules can predate fenced metadata.
+            found = validate_rule_metadata_text(source.read_text(encoding="utf-8"), relative) if ownership == "managed" else []
             if not found:
-                found = validate_links(layout, paths=[relative])
+                found = validate_links(layout, paths=[relative], navigation_exists=navigation_exists)
             for issue in found:
                 issues.append(ValidationIssue(issue.code, issue.message, issue.path, scope=scope))
                 if scope != "core":

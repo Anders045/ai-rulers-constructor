@@ -26,11 +26,11 @@ REVIEW = (
 @contextmanager
 def runtime_fixture(
     *, rulers_dir: str = "documents/rulers", domains: Sequence[str] = (),
-    policy: str = "strict-cn",
+    policy: str = "strict-cn", skill_root: Path = SKILL_ROOT,
 ) -> Iterator[Path]:
     """Yield a validated runtime project and remove it on exit."""
     registry = json.loads(
-        (SKILL_ROOT / "templates/domain-registry.json").read_text(encoding="utf-8")
+        (skill_root / "templates/domain-registry.json").read_text(encoding="utf-8")
     )["domains"]
     ordered: list[str] = []
 
@@ -51,8 +51,8 @@ def runtime_fixture(
 
     with tempfile.TemporaryDirectory(prefix="ai-rulers-runtime-") as temporary:
         project = Path(temporary).resolve()
-        cli = SKILL_ROOT / "scripts/rulers_init.py"
-        validator = SKILL_ROOT / "scripts/validate_rulers.py"
+        cli = skill_root / "scripts/rulers_init.py"
+        validator = skill_root / "scripts/validate_rulers.py"
 
         def run(script: Path, *args: str) -> None:
             result = subprocess.run(

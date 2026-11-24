@@ -101,16 +101,23 @@ def module_bundle(inspection, *, names, domains=(), rules=(), workspace_domains=
     commands = []
     for name in sorted(set(names)):
         record,snapshot = accepted_module(inspection,name)
-        chosen = set(domains) or {rule["domain"] for rule in snapshot["rules"].values()}
-        if not chosen <= {rule["domain"] for rule in snapshot["rules"].values()}:
+        exported_rules = snapshot["rules"]
+        exported_domains = {rule["domain"] for rule in exported_rules.values()}
+        chosen = set(domains) if domains or rules else exported_domains
+        if not chosen <= exported_domains:
             raise ValueError(f"Unknown module domain selection: {name}")
         prefix = storage_prefix(inspection.layout.rulers_dir,name)
-        allowed = {prefix+"/rules/"+path:path for path in snapshot["rules"]}
-        queue = [path for path,source in allowed.items() if snapshot["rules"][source]["domain"] in chosen and Path(source).name=="INDEX.md"]
+        selected_paths = []
         for requested in rules:
             relative = requested.removeprefix(name+":")
-            if relative in snapshot["rules"] and snapshot["rules"][relative]["domain"] in chosen:
-                queue.append(prefix+"/rules/"+relative); matched.add(requested)
+            rule = exported_rules.get(relative)
+            if rule is not None and (not domains or rule["domain"] in chosen):
+                chosen.add(rule["domain"])
+                selected_paths.append(f"{prefix}/rules/{relative}")
+                matched.add(requested)
+        rule_domains = {f"{prefix}/rules/{path}": rule["domain"] for path, rule in exported_rules.items()}
+        queue = [path for path, domain in rule_domains.items() if domain in chosen and Path(path).name == "INDEX.md"]
+        queue.extend(selected_paths)
         seen = set()
         contents.append(f"## Module {name}\nCode root: {record['source']['path']}\n")
         while queue:
@@ -127,12 +134,14 @@ def module_bundle(inspection, *, names, domains=(), rules=(), workspace_domains=
                 if target is None or target.name in {"AGENTS.md","RULERS_STATE.json"}:
                     continue
                 dependency = target.relative_to(inspection.layout.project_root).as_posix()
-                if dependency in allowed:
+                if dependency in rule_domains:
                     queue.append(dependency)
                 elif dependency != prefix+"/PROFILE.md" and dependency not in base["files"]:
                     raise ValueError(f"Dependency outside exported module: {dependency}")
         profile_path = prefix+"/PROFILE.md"
-        profile = select_profile_sections(snapshot["profile"],scopes={"core",*chosen},always_sections=["项目身份"])
+        profile_scopes = {"core", *chosen}
+        profile_scopes.update(rule_domains[path] for path in seen)
+        profile = select_profile_sections(snapshot["profile"], scopes=profile_scopes, always_sections=["项目身份"])
         contents.append(f"<!-- {profile_path} -->\n{profile}");files.append(profile_path)
         available.extend(name+":"+path for path,rule in snapshot["rules"].items() if rule["domain"] in chosen)
         for command in snapshot["commands"]:

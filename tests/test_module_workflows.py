@@ -14,6 +14,8 @@ from scripts.runtime_fixture import SKILL_ROOT, REVIEW
 MODULE_SKILL_ROOT = Path(os.environ.get("RULERS_TEST_SKILL_ROOT", str(SKILL_ROOT)))
 CLI = MODULE_SKILL_ROOT / "scripts/rulers_init.py"
 VALIDATOR = MODULE_SKILL_ROOT / "scripts/validate_rulers.py"
+DATABASE_FACTS = ("migrations", "rollbacks", "schema.sql", "seeds", "views",
+                  "constraints", "checks", "indexes")
 
 
 class ModuleWorkflowTest(unittest.TestCase):
@@ -87,6 +89,132 @@ class ModuleWorkflowTest(unittest.TestCase):
 
     def validate_module(self, root, *args, success=True):
         return self.command([sys.executable, str(VALIDATOR), "--project-root", str(root), *args], success=success)
+
+    def migration_candidates(self, name, *, database_facts=DATABASE_FACTS, export_database=True):
+        self.add_submodule(name)
+        prefix = f".rulers-work/candidates/{name}"
+        draft = self.workspace / prefix
+        bodies = {
+            "database/INDEX.md": "[Migration](MIGRATION.md)",
+            "database/MIGRATION.md": f"Apply the {name} migration policy.",
+            "backend/INDEX.md": "[Write](WRITE.md)\n[Read](READ.md)\n[Batch](BATCH.md)",
+            "backend/WRITE.md": f"Apply the {name} write policy.",
+            "backend/READ.md": "[See also migration](../database/MIGRATION.md)",
+            "backend/BATCH.md": f"Apply the {name} batch policy.",
+            "security/INDEX.md": f"Apply the {name} security policy.",
+        }
+        dependencies = {"backend/WRITE.md": "../database/MIGRATION.md", "backend/BATCH.md": "WRITE.md"}
+        metadata = ("```yaml\nmetadata:\n  applies_to:\n    - '**/*'\n"
+                    "  trigger_keywords:\n    - storage\n  must_load_with:")
+        for relative, body in bodies.items():
+            path = draft / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            required = f"\n    - {dependencies[relative]}" if relative in dependencies else " []"
+            path.write_text(f"# {path.stem}\n{metadata}{required}\n```\n\n{body}\n")
+
+        profile = (self.workspace / "documents/rulers/PROJECT_PROFILE.md").read_text()
+        facts = [(scope, f"{name}/{scope}-policy") for scope in ("core", "backend", "security")]
+        facts.extend(("database", f"{name}/storage/{fact}") for fact in database_facts)
+        rows = [f"| {fact} | approved | README.md | {scope} | high |" for scope, fact in facts]
+        separator = "| --- | --- | --- | --- | --- |"
+        (draft / "profile.md").write_text(profile.replace(separator, "\n".join([separator, *rows]), 1))
+        domains = ("database", "backend", "security")
+        scopes = ["core", "backend", "security"]
+        if export_database:
+            scopes.append("database")
+        (draft / "export.json").write_text(json.dumps({
+            "version": 1, "profile_scopes": scopes,
+            "rules": [{"path": path, "domain": path.split("/")[0]} for path in bodies],
+            "commands": [], "evidence": ["README.md"],
+        }))
+        return name, {"profile": f"{prefix}/profile.md", "export_manifest": f"{prefix}/export.json",
+                      "domains": {domain: f"{prefix}/{domain}" for domain in domains}}
+
+    def adopt_migration_modules(self, *candidates):
+        settings = self.workspace / ".rulers-work/migration-candidates.json"
+        settings.write_text(json.dumps({"projects": dict(candidates)}))
+        summary = json.loads(self.cli(self.workspace, "init-plan", "--candidates",
+                                      str(settings.relative_to(self.workspace))).stdout)
+        self.assertEqual([], summary["preparation"])
+        self.cli(self.workspace, "init-apply", "--plan", summary["plan_path"],
+                 "--reviewed-by", "synthetic-fixture", "--evidence", "test-only module facts")
+
+    def load_installed(self, root, *selectors):
+        validator = root / "documents/rulers/scripts/validate_rulers.py"
+        return self.command([sys.executable, str(validator), "--project-root", str(root),
+                             "--mode", "load", *selectors]).stdout
+
+    def test_required_rule_loads_all_exported_domain_facts(self):
+        self.adopt_migration_modules(self.migration_candidates("server"))
+        server = self.workspace / "server"
+        rule = ("--rule", "backend/WRITE.md")
+        standalone = self.load_installed(server, "--domain", "backend", *rule)
+        source_profile = server / "documents/rulers/PROJECT_PROFILE.md"
+        source_profile.write_text(source_profile.read_text().replace("server/storage/migrations", "pending/migrations"))
+        adopted = self.load_installed(self.workspace, "--module", "server", "--domain", "backend", *rule)
+        self.assertNotIn("pending/migrations", adopted)
+        for loaded in (standalone, adopted):
+            self.assertIn("Apply the server write policy.", loaded)
+            self.assertIn("Apply the server migration policy.", loaded)
+            self.assertIn("server/core-policy", loaded)
+            self.assertIn("server/backend-policy", loaded)
+            self.assertNotIn("server/security-policy", loaded)
+            for fact in DATABASE_FACTS:
+                self.assertIn(f"server/storage/{fact}", loaded)
+
+        navigation = self.load_installed(self.workspace, "--module", "server", "--domain", "backend", "--rule", "backend/READ.md")
+        self.assertIn("[See also migration]", navigation)
+        self.assertNotIn("Apply the server migration policy.", navigation)
+        self.assertIn("server/backend-policy", navigation)
+        self.assertNotIn("server/storage/", navigation)
+
+    def test_each_selected_module_uses_its_own_required_rules_for_facts(self):
+        self.adopt_migration_modules(self.migration_candidates("api"), self.migration_candidates("worker"))
+        combined = self.load_installed(
+            self.workspace, "--module", "api", "--module", "worker", "--domain", "backend",
+            "--rule", "api:backend/BATCH.md", "--rule", "worker:backend/READ.md",
+        )
+        self.assertIn("api/backend-policy", combined)
+        self.assertIn("worker/backend-policy", combined)
+        self.assertIn("Apply the api write policy.", combined)
+        self.assertIn("Apply the api migration policy.", combined)
+        self.assertNotIn("Apply the worker migration policy.", combined)
+        self.assertIn("api/storage/migrations", combined)
+        self.assertNotIn("worker/storage/", combined)
+
+    def test_module_rules_without_domain_load_only_their_own_and_required_scopes(self):
+        self.adopt_migration_modules(self.migration_candidates("api"), self.migration_candidates("worker"))
+        for leaf, needs_migration in (("WRITE", True), ("READ", False)):
+            with self.subTest(leaf=leaf):
+                loaded = self.load_installed(self.workspace, "--module", "api", "--rule", f"backend/{leaf}.md")
+                self.assertIn("api/backend-policy", loaded)
+                self.assertEqual(needs_migration, "Apply the api migration policy." in loaded)
+                self.assertEqual(needs_migration, "api/storage/migrations" in loaded)
+                self.assertNotIn("api/security-policy", loaded)
+
+        combined = self.load_installed(self.workspace, "--module", "api", "--module", "worker",
+                                       "--rule", "api:backend/BATCH.md", "--rule", "worker:security/INDEX.md")
+        self.assertIn("api/storage/migrations", combined)
+        self.assertNotIn("api/security-policy", combined)
+        self.assertIn("worker/security-policy", combined)
+        self.assertNotIn("worker/backend-policy", combined)
+        self.assertNotIn("worker/storage/", combined)
+
+        discovery = self.load_installed(self.workspace, "--module", "api")
+        for fact in ("api/backend-policy", "api/storage/migrations", "api/security-policy"):
+            self.assertIn(fact, discovery)
+
+    def test_absent_and_unexported_database_facts_keep_the_required_rule_loadable(self):
+        self.adopt_migration_modules(self.migration_candidates("empty", database_facts=()),
+                                     self.migration_candidates("private", export_database=False))
+        rule = ("--rule", "backend/WRITE.md")
+        local = self.load_installed(self.workspace / "private", "--domain", "backend", *rule)
+        self.assertIn("private/storage/migrations", local)
+        combined = self.load_installed(self.workspace, "--module", "empty", "--module", "private", "--domain", "backend", *rule)
+        for name in ("empty", "private"):
+            self.assertIn(f"Apply the {name} migration policy.", combined)
+            self.assertIn(f"{name}/backend-policy", combined)
+            self.assertNotIn(f"{name}/storage/", combined)
 
     def test_register_direct_submodules_and_repeat_without_writes(self):
         server = self.add_submodule("server")

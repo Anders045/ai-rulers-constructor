@@ -1,0 +1,69 @@
+diff --git a/skills/ai-rulers-init/scripts/rulers_lib/rule_loading.py b/skills/ai-rulers-init/scripts/rulers_lib/rule_loading.py
+index c704354..6340473 100644
+--- a/skills/ai-rulers-init/scripts/rulers_lib/rule_loading.py
++++ b/skills/ai-rulers-init/scripts/rulers_lib/rule_loading.py
+@@ -9,6 +9,17 @@ from .issues import ValidationIssue
+ from .paths import resolve_safe_child
+ from .domains import rule_owner
+ from .reconcile import select_profile_sections
++from .state import text_sha256
++
++
++# Reviewed template bodies before RULERS_DIR substitution, without the AI_FILL authoring section.
++# A changed template needs a new review before its installed body can be omitted.
++_WEB_NAVIGATION_DIGESTS = {
++    "frontend/INDEX.md": "sha256:6c8bc226c1f0771efacf0d2c2ad83f519b6574d78bf39121984b0e1653e6a6ef",
++    "frontend/web/INDEX.md": "sha256:d8611df3fdc865405f4c337da180a345d1cced91710705a3da7b75f63682b6a9",
++    "frontend/web/design/INDEX.md": "sha256:49ebdaa74512ffebde781b6a1d3e1ac30b65c68ad01e51cba05a513790425af9",
++    "frontend/common/INDEX.md": "sha256:794c47b72d5c5bf33b11f3eaf74889df2586322d1b1b250b26e9ceabad8f715d",
++}
+
+
+ def conditional_core_rules(inspection):
+@@ -98,6 +109,25 @@ def validate_index_routes(layout, *, index_path: str, paths):
+             for path in sorted(allowed - visited)]
+
+
++def _project_web_navigation(inspection, selected, explicit):
++    rulers_dir = inspection.layout.rulers_dir
++    web_prefix = f"{rulers_dir}/frontend/web/"
++    if not any(path.startswith(web_prefix) and not path.endswith("/INDEX.md") for path in explicit):
++        return
++    for path, reviewed_digest in _WEB_NAVIGATION_DIGESTS.items():
++        relative = f"{rulers_dir}/{path}"
++        if relative not in selected or relative in explicit:
++            continue
++        text = selected[relative]
++        # Every variable coordinate in these four reviewed bodies starts with this prefix.
++        template = text.replace(f"{rulers_dir}/frontend/", "{{RULERS_DIR}}/frontend/")
++        if text_sha256(template) == reviewed_digest:
++            # Check the exact rendered bytes as well (read_text normalizes line endings).
++            rendered = template.replace("{{RULERS_DIR}}", rulers_dir)
++            if text_sha256(rendered) == inspection.state["managed_files"][relative]["rendered_sha256"]:
++                selected[relative] = ""
++
++
+ def build_load_bundle(inspection, *, domains=(), rules=()):
+     from .validation import build_runtime_context, BUDGETS
+     context = build_runtime_context(inspection, requested_domains=domains)
+@@ -110,10 +140,12 @@ def build_load_bundle(inspection, *, domains=(), rules=()):
+         allowed.update(f"{layout.rulers_dir}/{value['target_dir']}/{name}" for name in value.get("required_files", [])
+                        if rule_owner(f"{value['target_dir']}/{name}", inspection.state["domains"]) == domain)
+     queue = list(context["load"]["core"]) + list(context["load"]["indexes"])
++    explicit = set()
+     for rule in rules:
+         relative = rule if rule.startswith(layout.rulers_dir + "/") else f"{layout.rulers_dir}/{rule}"
+         if relative not in allowed:
+             raise ValueError(f"Rule is not in the selected active domain: {rule}")
++        explicit.add(relative)
+         queue.append(relative)
+     selected = {}
+     while queue:
+@@ -138,6 +170,7 @@ def build_load_bundle(inspection, *, domains=(), rules=()):
+             source.read_text(encoding="utf-8"), scopes=set(context["profile"]["scopes"]),
+             always_sections=context["profile"]["always_sections"],
+         )
++    _project_web_navigation(inspection, selected, explicit)
+     content = "\n\n".join(f"<!-- {name} -->\n{text}" for name, text in selected.items())
+     total = len(content.encode("utf-8"))
+     return {"files": list(selected), "available_rules": sorted(allowed), "bytes": total, "within_budget": total <= BUDGETS["fixed_chain_bytes"],

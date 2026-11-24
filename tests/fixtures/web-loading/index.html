@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<meta charset="utf-8">
+<title>工单详情</title>
+<link rel="stylesheet" href="palette.css">
+<style>
+  body { font: 16px system-ui; color: var(--text); background: var(--surface); }
+  .badge { display: inline-block; padding: .25em .6em; border: 1px solid var(--neutral-line);
+           color: var(--neutral-ink); background: var(--neutral-surface); }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+</style>
+<main>
+  <h1>工单详情</h1>
+  <p><span class="badge" data-status="pending">待处理</span>
+     <span class="badge" data-status="closed">已关闭</span></p>
+  <button type="button" data-editor="title">编辑标题</button>
+  <button type="button" data-editor="owner">编辑负责人</button>
+  <dialog aria-labelledby="editor-title" id="editor">
+    <h2 id="editor-title">编辑工单</h2>
+    <label>新值 <input id="editor-value"></label>
+    <button type="button" id="cancel">取消</button>
+  </dialog>
+</main>
+<script>
+  const editor = document.querySelector('#editor');
+  for (const button of document.querySelectorAll('[data-editor]')) {
+    button.addEventListener('click', () => {
+      editor.setAttribute('open', '');
+    });
+  }
+  document.querySelector('#cancel').addEventListener('click', () => {
+    editor.removeAttribute('open');
+  });
+</script>
+</html>

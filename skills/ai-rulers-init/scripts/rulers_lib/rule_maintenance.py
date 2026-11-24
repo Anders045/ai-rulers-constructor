@@ -36,6 +36,19 @@ def _files(root: Path, *, excluded_dirs=()) -> dict[str, str]:
     return result
 
 
+def validate_nested_copies(candidate, target, excluded_dirs):
+    """Return the other domains' copied directories after verifying their original content."""
+    copies = []
+    for excluded in excluded_dirs:
+        copied = candidate / excluded
+        if copied.exists() or copied.is_symlink():
+            installed = target / excluded
+            if _files(copied) != (_files(installed) if installed.exists() else {}):
+                raise ValueError(f"Candidate modifies another domain subtree: {excluded}; maintain it separately")
+            copies.append(copied)
+    return copies
+
+
 def _digest(plan):
     return identity({key: value for key, value in plan.items() if key != "sha256"})
 
@@ -111,12 +124,7 @@ def plan_rules_change(*, skill_root: Path, project_root: Path, rulers_dir: str,
         raise ValueError("Stage candidates outside the installed rulers directory")
     target = checked_path(layout.rulers_root, config["target_dir"])
     excluded_dirs = nested_domain_dirs(domain, declared)
-    for excluded in excluded_dirs:
-        copied = candidate / excluded
-        if copied.exists() or copied.is_symlink():
-            installed = target / excluded
-            if _files(copied) != (_files(installed) if installed.exists() else {}):
-                raise ValueError(f"Candidate modifies another domain subtree: {excluded}; maintain it separately")
+    validate_nested_copies(candidate, target, excluded_dirs)
     desired = _files(candidate, excluded_dirs=excluded_dirs)
     if "INDEX.md" not in desired:
         raise ValueError("Domain candidate needs INDEX.md")
@@ -332,7 +340,8 @@ def _recover_owned(layout, plan, skill_root, reviewed_by, evidence):
                         expected_lock_sha256=interrupted.lock_sha256, expected_lock_nonce=interrupted.lock_nonce)
 
 
-def apply_rules_change(*, plan: dict, skill_root: Path, reviewed_by: str, evidence: str) -> dict:
+def apply_rules_change(*, plan: dict, skill_root: Path, reviewed_by: str, evidence: str,
+                       _navigation_exists=Path.is_file) -> dict:
     if not reviewed_by.strip() or not evidence.strip():
         raise ValueError("Rule changes require reviewer and evidence")
     if plan.get("sha256") != _digest(plan) or plan.get("plan_version") != 2:
@@ -385,9 +394,11 @@ def apply_rules_change(*, plan: dict, skill_root: Path, reviewed_by: str, eviden
             actions.append(ReplaceAction(state_relative, state_json(state).encode("utf-8")))
             changed = transaction.apply(actions)
             from .rule_loading import validate_links, validate_index_routes
-            extras = validate_links(layout, paths=[prefix + name for name in plan["after"]])
+            extras = validate_links(layout, paths=[prefix + name for name in plan["after"]],
+                                    navigation_exists=_navigation_exists)
             extras.extend(validate_index_routes(layout, index_path=prefix + "INDEX.md", paths=[prefix + name for name in plan["after"]]))
-            inspection = inspect_project(project_root=layout.project_root, rulers_dir=layout.rulers_dir)
+            inspection = inspect_project(project_root=layout.project_root, rulers_dir=layout.rulers_dir,
+                                         navigation_exists=_navigation_exists)
             blockers = scoped_validation_issues(inspection, [domain], extra_issues=extras, require_active_dependencies=False)
             if blockers:
                 raise ValueError("Rule validation failed: " + "; ".join(f"{i.code} {i.message}" for i in blockers))

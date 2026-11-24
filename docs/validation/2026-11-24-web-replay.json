@@ -1,0 +1,923 @@
+{
+  "source_baseline": "cd663c23ecdf8462f4d4078a9d5460ee04193417",
+  "host": "Codex CLI",
+  "host_version": "codex-cli 0.171.0",
+  "requested_model": "gpt-6.2-sol",
+  "resolved_model": "unknown",
+  "reasoning": "medium",
+  "sandbox": "workspace-write",
+  "browser": "158.0.8127.88",
+  "loader_sha256": {
+    "baseline": "343812c9da9274ab6018d1e6662a0565d964206ec7875f2261586c2dc5c1a934",
+    "candidate": "711c9a034e1450902021aaccf6ebb06ae48aebf1ac96b522fc085edf821a4c6d"
+  },
+  "input_asset_sha256": {
+    "index.html": "f1158c06884f4b418f2c1056f0560607d17355bc3271ad6d008803447cb30c1e",
+    "palette.css": "faeb5bbcac74d9d811a4745b1cacf19e5b56e7a3d3a1f44a420e7261b26e4816",
+    "README.md": "87eee2e90c321939d212db5df8503219d6072540f52303fee90ec8411ddd2e62",
+    "design.md": "71ce639f149f5e6e0fcceff6f95689dab82f4096f4bca2e42a39d8764ea5f7ba"
+  },
+  "all_browser_checks": 32,
+  "all_passed_checks": 32,
+  "runs": [
+    {
+      "id": "r01",
+      "task": "focus",
+      "variant": "baseline",
+      "repeat": 1,
+      "rule_bytes": 16947,
+      "first_bytes": 13727,
+      "repeat_bytes": 3220,
+      "shell_bytes": 30465,
+      "seconds": 76.5,
+      "events_sha256": "73077c1049fe8fdcf5d04b7a7f1d235d1339f68947f90303394c3ad6a4c97c78",
+      "public_rule_reads": [
+        {
+          "id": "item_1",
+          "kind": [
+            "direct"
+          ],
+          "bytes": 1987,
+          "path_bytes": {
+            "documents/rulers/AGENTS.md": 1987
+          }
+        },
+        {
+          "id": "item_3",
+          "kind": [
+            "context"
+          ],
+          "bytes": 574,
+          "path_bytes": {
+            "Context": 574
+          }
+        },
+        {
+          "id": "item_5",
+          "kind": [
+            "direct"
+          ],
+          "bytes": 3055,
+          "path_bytes": {
+            "documents/rulers/frontend/web/develop/INDEX.md": 1231,
+            "documents/rulers/frontend/web/design/INDEX.md": 1067,
+            "documents/rulers/frontend/web/INDEX.md": 757
+          }
+        },
+        {
+          "id": "item_6",
+          "kind": [
+            "load"
+          ],
+          "bytes": 11331,
+          "path_bytes": {
+            "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+            "documents/rulers/core/WORKFLOW.md": 1724,
+            "documents/rulers/frontend/INDEX.md": 809,
+            "documents/rulers/frontend/web/design/ACCESSIBILITY.md": 1320,
+            "documents/rulers/frontend/web/develop/TESTING.md": 1097,
+            "documents/rulers/frontend/web/design/INDEX.md": 1124,
+            "documents/rulers/frontend/common/DESIGN_TOKENS.md": 1192,
+            "documents/rulers/frontend/web/develop/INDEX.md": 1289,
+            "documents/rulers/frontend/web/INDEX.md": 807,
+            "documents/rulers/frontend/common/INDEX.md": 713,
+            "documents/rulers/PROJECT_PROFILE.md": 595
+          }
+        }
+      ],
+      "prompt_sha256": "a89e13b93fd7b2d61b168004d6dd3f9e868474483fb4aef4e23c6bb4d3a35c5b",
+      "browser_checks": 4,
+      "passed_checks": 4
+    },
+    {
+      "id": "r02",
+      "task": "theme",
+      "variant": "candidate",
+      "repeat": 1,
+      "rule_bytes": 16848,
+      "first_bytes": 15399,
+      "repeat_bytes": 1449,
+      "shell_bytes": 29572,
+      "seconds": 45.6,
+      "events_sha256": "128d73a33324311e7dbd80f0d00a03c0e954f9a2fe72ddac1e8a97bc35363422",
+      "public_rule_reads": [
+        {
+          "id": "item_2",
+          "kind": [
+            "direct"
+          ],
+          "bytes": 1987,
+          "path_bytes": {
+            "documents/rulers/AGENTS.md": 1987
+          }
+        },
+        {
+          "id": "item_3",
+          "kind": [
+            "context"
+          ],
+          "bytes": 574,
+          "path_bytes": {
+            "Context": 574
+          }
+        },
+        {
+          "id": "item_5",
+          "kind": [
+            "direct"
+          ],
+          "bytes": 3715,
+          "path_bytes": {
+            "documents/rulers/frontend/web/develop/INDEX.md": 1231,
+            "documents/rulers/frontend/web/design/INDEX.md": 1067,
+            "documents/rulers/frontend/web/INDEX.md": 757,
+            "documents/rulers/frontend/common/INDEX.md": 660
+          }
+        },
+        {
+          "id": "item_6",
+          "kind": [
+            "load"
+          ],
+          "bytes": 10572,
+          "path_bytes": {
+            "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+            "documents/rulers/core/WORKFLOW.md": 1724,
+            "documents/rulers/frontend/INDEX.md": 46,
+            "documents/rulers/frontend/web/design/VISUAL_SYSTEM.md": 1325,
+            "documents/rulers/frontend/web/design/COMPONENT_PATTERNS.md": 1163,
+            "documents/rulers/frontend/web/design/ACCESSIBILITY.md": 1320,
+            "documents/rulers/frontend/web/develop/TESTING.md": 1097,
+            "documents/rulers/frontend/web/design/INDEX.md": 57,
+            "documents/rulers/frontend/common/DESIGN_TOKENS.md": 1192,
+            "documents/rulers/frontend/web/develop/INDEX.md": 1289,
+            "documents/rulers/frontend/web/INDEX.md": 50,
+            "documents/rulers/frontend/common/INDEX.md": 53,
+            "documents/rulers/PROJECT_PROFILE.md": 595
+          }
+        }
+      ],
+      "prompt_sha256": "07578cb5a101ea974b54d2e864e9d17a225eb84b0c8975a63083b8fc0b6bec58",
+      "browser_checks": 4,
+      "passed_checks": 4
+    },
+    {
+      "id": "r03",
+      "task": "theme",
+      "variant": "baseline",
+      "repeat": 1,
+      "rule_bytes": 30717,
+      "first_bytes": 13994,
+      "repeat_bytes": 16723,
+      "shell_bytes": 37311,
+      "seconds": 50.0,
+      "events_sha256": "9e854cbeedfaf46ba6d7c7ad5a7e393018d98b1bb2a13c9373054fc9c211294c",
+      "public_rule_reads": [
+        {
+          "id": "item_2",
+          "kind": [
+            "direct"
+          ],
+          "bytes": 1987,
+          "path_bytes": {
+            "documents/rulers/AGENTS.md": 1987
+          }
+        },
+        {
+          "id": "item_3",
+          "kind": [
+            "context"
+          ],
+          "bytes": 574,
+          "path_bytes": {
+            "Context": 574
+          }
+        },
+        {
+          "id": "item_4",
+          "kind": [
+            "load"
+          ],
+          "bytes": 3789,
+          "path_bytes": {
+            "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+            "documents/rulers/core/WORKFLOW.md": 1724,
+            "documents/rulers/frontend/INDEX.md": 809,
+            "documents/rulers/PROJECT_PROFILE.md": 595
+          }
+        },
+        {
+          "id": "item_6",
+          "kind": [
+            "load"
+          ],
+          "bytes": 5309,
+          "path_bytes": {
+            "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+            "documents/rulers/core/WORKFLOW.md": 1724,
+            "documents/rulers/frontend/INDEX.md": 809,
+            "documents/rulers/frontend/common/INDEX.md": 713,
+            "documents/rulers/frontend/web/INDEX.md": 807,
+            "documents/rulers/PROJECT_PROFILE.md": 595
+          }
+        },
+        {
+          "id": "item_7",
+          "kind": [
+            "load"
+          ],
+          "bytes": 7625,
+          "path_bytes": {
+            "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+            "documents/rulers/core/WORKFLOW.md": 1724,
+            "documents/rulers/frontend/INDEX.md": 809,
+            "documents/rulers/frontend/common/DESIGN_TOKENS.md": 1192,
+            "documents/rulers/frontend/web/design/INDEX.md": 1124,
+            "documents/rulers/frontend/common/INDEX.md": 713,
+            "documents/rulers/frontend/web/INDEX.md": 807,
+            "documents/rulers/PROJECT_PROFILE.md": 595
+          }
+        },
+        {
+          "id": "item_9",
+          "kind": [
+            "load"
+          ],
+          "bytes": 11433,
+          "path_bytes": {
+            "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+            "documents/rulers/core/WORKFLOW.md": 1724,
+            "documents/rulers/frontend/INDEX.md": 809,
+            "documents/rulers/frontend/web/design/VISUAL_SYSTEM.md": 1325,
+            "documents/rulers/frontend/web/design/COMPONENT_PATTERNS.md": 1163,
+            "documents/rulers/frontend/web/design/ACCESSIBILITY.md": 1320,
+            "documents/rulers/frontend/web/design/INDEX.md": 1124,
+            "documents/rulers/frontend/common/DESIGN_TOKENS.md": 1192,
+            "documents/rulers/frontend/web/INDEX.md": 807,
+            "documents/rulers/frontend/common/INDEX.md": 713,
+            "documents/rulers/PROJECT_PROFILE.md": 595
+          }
+        }
+      ],
+      "prompt_sha256": "07578cb5a101ea974b54d2e864e9d17a225eb84b0c8975a63083b8fc0b6bec58",
+      "browser_checks": 4,
+      "passed_checks": 4
+    },
+    {
+      "id": "r04",
+      "task": "focus",
+      "variant": "candidate",
+      "repeat": 1,
+      "rule_bytes": 11808,
+      "first_bytes": 11808,
+      "repeat_bytes": 0,
+      "shell_bytes": 23220,
+      "seconds": 56.3,
+      "events_sha256": "9f4697d08326d8aa46f9efcfcb8c2aff56f060aac20d4464f1f721538d9d1160",
+      "public_rule_reads": [
+        {
+          "id": "item_2",
+          "kind": [
+            "direct"
+          ],
+          "bytes": 1987,
+          "path_bytes": {
+            "documents/rulers/AGENTS.md": 1987
+          }
+        },
+        {
+          "id": "item_4",
+          "kind": [
+            "context"
+          ],
+          "bytes": 574,
+          "path_bytes": {
+            "Context": 574
+          }
+        },
+        {
+          "id": "item_7",
+          "kind": [
+            "load"
+          ],
+          "bytes": 9247,
+          "path_bytes": {
+            "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+            "documents/rulers/core/WORKFLOW.md": 1724,
+            "documents/rulers/frontend/INDEX.md": 46,
+            "documents/rulers/frontend/web/design/ACCESSIBILITY.md": 1320,
+            "documents/rulers/frontend/web/design/COMPONENT_PATTERNS.md": 1163,
+            "documents/rulers/frontend/web/develop/TESTING.md": 1097,
+            "documents/rulers/frontend/web/design/INDEX.md": 57,
+            "documents/rulers/frontend/common/DESIGN_TOKENS.md": 1192,
+            "documents/rulers/frontend/web/develop/INDEX.md": 1289,
+            "documents/rulers/frontend/web/INDEX.md": 50,
+            "documents/rulers/frontend/common/INDEX.md": 53,
+            "documents/rulers/PROJECT_PROFILE.md": 595
+          }
+        }
+      ],
+      "prompt_sha256": "a89e13b93fd7b2d61b168004d6dd3f9e868474483fb4aef4e23c6bb4d3a35c5b",
+      "browser_checks": 4,
+      "passed_checks": 4
+    },
+    {
+      "id": "r05",
+      "task": "focus",
+      "variant": "candidate",
+      "repeat": 2,
+      "rule_bytes": 17421,
+      "first_bytes": 14345,
+      "repeat_bytes": 3076,
+      "shell_bytes": 31475,
+      "seconds": 72.0,
+      "events_sha256": "14050e31d70e41b4129896a78dbda28bbbec3444a1e42ff226a511288448dcff",
+      "public_rule_reads": [
+        {
+          "id": "item_2",
+          "kind": [
+            "direct"
+          ],
+          "bytes": 1987,
+          "path_bytes": {
+            "documents/rulers/AGENTS.md": 1987
+          }
+        },
+        {
+          "id": "item_3",
+          "kind": [
+            "context"
+          ],
+          "bytes": 574,
+          "path_bytes": {
+            "Context": 574
+          }
+        },
+        {
+          "id": "item_5",
+          "kind": [
+            "load"
+          ],
+          "bytes": 3789,
+          "path_bytes": {
+            "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+            "documents/rulers/core/WORKFLOW.md": 1724,
+            "documents/rulers/frontend/INDEX.md": 809,
+            "documents/rulers/PROJECT_PROFILE.md": 595
+          }
+        },
+        {
+          "id": "item_6",
+          "kind": [
+            "direct"
+          ],
+          "bytes": 757,
+          "path_bytes": {
+            "documents/rulers/frontend/web/INDEX.md": 757
+          }
+        },
+        {
+          "id": "item_7",
+          "kind": [
+            "load"
+          ],
+          "bytes": 10314,
+          "path_bytes": {
+            "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+            "documents/rulers/core/WORKFLOW.md": 1724,
+            "documents/rulers/frontend/INDEX.md": 46,
+            "documents/rulers/frontend/web/design/INDEX.md": 1124,
+            "documents/rulers/frontend/web/design/ACCESSIBILITY.md": 1320,
+            "documents/rulers/frontend/web/design/COMPONENT_PATTERNS.md": 1163,
+            "documents/rulers/frontend/web/develop/INDEX.md": 1289,
+            "documents/rulers/frontend/web/develop/TESTING.md": 1097,
+            "documents/rulers/frontend/web/INDEX.md": 50,
+            "documents/rulers/frontend/common/DESIGN_TOKENS.md": 1192,
+            "documents/rulers/frontend/common/INDEX.md": 53,
+            "documents/rulers/PROJECT_PROFILE.md": 595
+          }
+        }
+      ],
+      "prompt_sha256": "a89e13b93fd7b2d61b168004d6dd3f9e868474483fb4aef4e23c6bb4d3a35c5b",
+      "browser_checks": 4,
+      "passed_checks": 4
+    },
+    {
+      "id": "r06",
+      "task": "theme",
+      "variant": "baseline",
+      "repeat": 2,
+      "rule_bytes": 20858,
+      "first_bytes": 16116,
+      "repeat_bytes": 4742,
+      "shell_bytes": 28899,
+      "seconds": 68.6,
+      "events_sha256": "9a3808b1670f26c6564f0bdeb1cef04e5ad471241b0d7bed6fbe0c22ee1cb137",
+      "public_rule_reads": [
+        {
+          "id": "item_1",
+          "kind": [
+            "direct"
+          ],
+          "bytes": 1987,
+          "path_bytes": {
+            "documents/rulers/AGENTS.md": 1987
+          }
+        },
+        {
+          "id": "item_4",
+          "kind": [
+            "context"
+          ],
+          "bytes": 574,
+          "path_bytes": {
+            "Context": 574
+          }
+        },
+        {
+          "id": "item_6",
+          "kind": [
+            "direct"
+          ],
+          "bytes": 4478,
+          "path_bytes": {
+            "documents/rulers/frontend/web/develop/INDEX.md": 1231,
+            "documents/rulers/frontend/web/design/INDEX.md": 1067,
+            "documents/rulers/frontend/web/INDEX.md": 757,
+            "documents/rulers/frontend/INDEX.md": 763,
+            "documents/rulers/frontend/common/INDEX.md": 660
+          }
+        },
+        {
+          "id": "item_7",
+          "kind": [
+            "load"
+          ],
+          "bytes": 13819,
+          "path_bytes": {
+            "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+            "documents/rulers/core/WORKFLOW.md": 1724,
+            "documents/rulers/frontend/INDEX.md": 809,
+            "documents/rulers/frontend/common/DESIGN_TOKENS.md": 1192,
+            "documents/rulers/frontend/web/design/VISUAL_SYSTEM.md": 1325,
+            "documents/rulers/frontend/web/design/COMPONENT_PATTERNS.md": 1163,
+            "documents/rulers/frontend/web/design/ACCESSIBILITY.md": 1320,
+            "documents/rulers/frontend/web/develop/TESTING.md": 1097,
+            "documents/rulers/frontend/common/INDEX.md": 713,
+            "documents/rulers/frontend/web/design/INDEX.md": 1124,
+            "documents/rulers/frontend/web/develop/INDEX.md": 1289,
+            "documents/rulers/frontend/web/INDEX.md": 807,
+            "documents/rulers/PROJECT_PROFILE.md": 595
+          }
+        }
+      ],
+      "prompt_sha256": "07578cb5a101ea974b54d2e864e9d17a225eb84b0c8975a63083b8fc0b6bec58",
+      "browser_checks": 4,
+      "passed_checks": 4
+    },
+    {
+      "id": "r07",
+      "task": "theme",
+      "variant": "candidate",
+      "repeat": 2,
+      "rule_bytes": 17611,
+      "first_bytes": 16116,
+      "repeat_bytes": 1495,
+      "shell_bytes": 31931,
+      "seconds": 56.0,
+      "events_sha256": "498d35eb80b1c76840b5ffa4ae9fea124e921382201c32778b4cf17beb53ae50",
+      "public_rule_reads": [
+        {
+          "id": "item_2",
+          "kind": [
+            "direct"
+          ],
+          "bytes": 1987,
+          "path_bytes": {
+            "documents/rulers/AGENTS.md": 1987
+          }
+        },
+        {
+          "id": "item_3",
+          "kind": [
+            "context"
+          ],
+          "bytes": 574,
+          "path_bytes": {
+            "Context": 574
+          }
+        },
+        {
+          "id": "item_5",
+          "kind": [
+            "direct"
+          ],
+          "bytes": 4478,
+          "path_bytes": {
+            "documents/rulers/frontend/web/develop/INDEX.md": 1231,
+            "documents/rulers/frontend/web/design/INDEX.md": 1067,
+            "documents/rulers/frontend/web/INDEX.md": 757,
+            "documents/rulers/frontend/INDEX.md": 763,
+            "documents/rulers/frontend/common/INDEX.md": 660
+          }
+        },
+        {
+          "id": "item_6",
+          "kind": [
+            "load"
+          ],
+          "bytes": 10572,
+          "path_bytes": {
+            "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+            "documents/rulers/core/WORKFLOW.md": 1724,
+            "documents/rulers/frontend/INDEX.md": 46,
+            "documents/rulers/frontend/web/design/VISUAL_SYSTEM.md": 1325,
+            "documents/rulers/frontend/web/design/COMPONENT_PATTERNS.md": 1163,
+            "documents/rulers/frontend/web/design/ACCESSIBILITY.md": 1320,
+            "documents/rulers/frontend/web/develop/TESTING.md": 1097,
+            "documents/rulers/frontend/web/design/INDEX.md": 57,
+            "documents/rulers/frontend/common/DESIGN_TOKENS.md": 1192,
+            "documents/rulers/frontend/web/develop/INDEX.md": 1289,
+            "documents/rulers/frontend/web/INDEX.md": 50,
+            "documents/rulers/frontend/common/INDEX.md": 53,
+            "documents/rulers/PROJECT_PROFILE.md": 595
+          }
+        }
+      ],
+      "prompt_sha256": "07578cb5a101ea974b54d2e864e9d17a225eb84b0c8975a63083b8fc0b6bec58",
+      "browser_checks": 4,
+      "passed_checks": 4
+    },
+    {
+      "id": "r08",
+      "task": "focus",
+      "variant": "baseline",
+      "repeat": 2,
+      "rule_bytes": 16947,
+      "first_bytes": 13727,
+      "repeat_bytes": 3220,
+      "shell_bytes": 26365,
+      "seconds": 65.5,
+      "events_sha256": "0db1e2c5b9e242b49a903341bf067ec2bb2856a024356567affd53aed4b645f0",
+      "public_rule_reads": [
+        {
+          "id": "item_2",
+          "kind": [
+            "direct"
+          ],
+          "bytes": 1987,
+          "path_bytes": {
+            "documents/rulers/AGENTS.md": 1987
+          }
+        },
+        {
+          "id": "item_3",
+          "kind": [
+            "context"
+          ],
+          "bytes": 574,
+          "path_bytes": {
+            "Context": 574
+          }
+        },
+        {
+          "id": "item_5",
+          "kind": [
+            "direct"
+          ],
+          "bytes": 3055,
+          "path_bytes": {
+            "documents/rulers/frontend/web/develop/INDEX.md": 1231,
+            "documents/rulers/frontend/web/design/INDEX.md": 1067,
+            "documents/rulers/frontend/web/INDEX.md": 757
+          }
+        },
+        {
+          "id": "item_6",
+          "kind": [
+            "load"
+          ],
+          "bytes": 11331,
+          "path_bytes": {
+            "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+            "documents/rulers/core/WORKFLOW.md": 1724,
+            "documents/rulers/frontend/INDEX.md": 809,
+            "documents/rulers/frontend/web/design/ACCESSIBILITY.md": 1320,
+            "documents/rulers/frontend/web/develop/TESTING.md": 1097,
+            "documents/rulers/frontend/web/design/INDEX.md": 1124,
+            "documents/rulers/frontend/common/DESIGN_TOKENS.md": 1192,
+            "documents/rulers/frontend/web/develop/INDEX.md": 1289,
+            "documents/rulers/frontend/web/INDEX.md": 807,
+            "documents/rulers/frontend/common/INDEX.md": 713,
+            "documents/rulers/PROJECT_PROFILE.md": 595
+          }
+        }
+      ],
+      "prompt_sha256": "a89e13b93fd7b2d61b168004d6dd3f9e868474483fb4aef4e23c6bb4d3a35c5b",
+      "browser_checks": 4,
+      "passed_checks": 4
+    }
+  ],
+  "precommit_holdout": {
+    "project": "馆藏工作台",
+    "tested_distribution_sha256": "a012c6b1331cb7fde4f4a07e4827740823bc98121ab1b798927ac9af861f5845",
+    "host": "codex-cli 0.171.0",
+    "requested_model": "gpt-6.2-sol",
+    "resolved_model": "unknown",
+    "effort": "medium",
+    "sandbox": "workspace-write",
+    "application_sha256": {
+      "README.md": "9db71c8191c64e0b9b3cb20cc6949380f5a67a6e001cb2a4ace0954534abbe2e",
+      "catalog.js": "a7d020b41f30708472556d1097e2903e2088e6fe6d138f1372e30290ede3a3fb",
+      "design.md": "bf99cea2ab1012c1e74da0986a50de16ce0d437183762c47665e723405bc9f9d",
+      "index.html": "7972a7c119eb7ec62fc30d89dc765ccb9a436da777018a3d97549702f6995986",
+      "palette.css": "413f54bf381038837ac44873119d26a9d9b8e774a68be24bda53b70978f0ac4c",
+      "shelves.css": "1b044db69be2737d6b89f90a5a67162692c54edc475299245128ee95e64e0695"
+    },
+    "criteria_sha256": "c45e03bcd4f0ee440aaa3b45bdbe849470876945ac1d08c36e41a151172dc15b",
+    "grader_sha256": "e04627b20b088b39d50e18e04e9e8c0177a52276f94aec5edc4a3af4b153761a",
+    "browser_version": "158.0.8127.88",
+    "original_page_scores": {
+      "keyboard": {
+        "pass": 8,
+        "total": 16,
+        "result_sha256": "7523a6250a33fc52d0a6121adf6d5d2904ba23d6bcbdb44703f8d53d9af637fc"
+      },
+      "capacity": {
+        "pass": 8,
+        "total": 24,
+        "result_sha256": "aac00ecf39f7c2adc32ed58be9f45e9dd4f1364a4c82b479b147a496404c848e"
+      }
+    },
+    "prompts": {
+      "keyboard": "馆藏工作台的“全部、可借、预约”三个页签目前只能点鼠标切换。请补好键盘操作：左右箭头循环移动并选中，Home 和 End 到首末项，Tab 可以从当前页签离开到借阅说明，对应面板和可访问状态要一起更新。验证完成后不要提交。",
+      "capacity": "馆员希望一眼看出拥挤书架。占用率达到 85%（含）时，进度填充和百分比文字应采用本项目的警示配色，低于阈值时走普通配色。改读数后也要立即更新，日间、夜间以及书架区域自己的主题覆盖都要正确。验证完成后不要提交。"
+    },
+    "rule_bytes_definition": "沿用原对照的完整规则包、Context 和完整文件匹配口径。过滤后的片段单列，不计入 rule_bytes。",
+    "runs": [
+      {
+        "id": "w1",
+        "variant": "default",
+        "task": "keyboard",
+        "rule_bytes": 18621,
+        "first_bytes": 15401,
+        "repeat_bytes": 3220,
+        "shell_bytes": 31381,
+        "seconds": 132.4,
+        "events_sha256": "47b6b74e945290dd09d0228a4287593bb519cc411bb63b0ff99ed0096f6c6f88",
+        "browser": {
+          "pass": 16,
+          "total": 16,
+          "result_sha256": "ae099e2cf046200429acc8b8737b034dbde3a2fe2674ab287fe32e3e2fa9fb3f"
+        },
+        "prompt_sha256": "41514dee37211df6ef870f2933fca0772c911d69edb4ffec33f404d318ad71db",
+        "reads": [
+          {
+            "id": "item_1",
+            "path_bytes": {
+              "documents/rulers/AGENTS.md": 1987
+            }
+          },
+          {
+            "id": "item_2",
+            "path_bytes": {
+              "Context": 574
+            }
+          },
+          {
+            "id": "item_4",
+            "path_bytes": {
+              "documents/rulers/frontend/web/develop/INDEX.md": 1231,
+              "documents/rulers/frontend/web/design/INDEX.md": 1067,
+              "documents/rulers/frontend/web/INDEX.md": 757
+            }
+          },
+          {
+            "id": "item_5",
+            "path_bytes": {
+              "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+              "documents/rulers/core/WORKFLOW.md": 1724,
+              "documents/rulers/frontend/INDEX.md": 809,
+              "documents/rulers/frontend/web/design/ACCESSIBILITY.md": 1320,
+              "documents/rulers/frontend/web/design/COMPONENT_PATTERNS.md": 1163,
+              "documents/rulers/frontend/web/develop/TESTING.md": 1097,
+              "documents/rulers/frontend/web/design/INDEX.md": 1124,
+              "documents/rulers/frontend/common/DESIGN_TOKENS.md": 1192,
+              "documents/rulers/frontend/web/develop/INDEX.md": 1289,
+              "documents/rulers/frontend/web/INDEX.md": 807,
+              "documents/rulers/frontend/common/INDEX.md": 713,
+              "documents/rulers/PROJECT_PROFILE.md": 653
+            }
+          },
+          {
+            "id": "item_7",
+            "path_bytes": {
+              "documents/rulers/frontend/app/INDEX.md": 453
+            }
+          }
+        ],
+        "separately_verified_filtered_fragments": [
+          {
+            "event": "item_9",
+            "path": "documents/rulers/frontend/app/INDEX.md",
+            "bytes": 225
+          },
+          {
+            "event": "item_9",
+            "path": "documents/rulers/PROJECT_PROFILE.md",
+            "bytes": 192
+          }
+        ]
+      },
+      {
+        "id": "w2",
+        "variant": "candidate",
+        "task": "capacity",
+        "rule_bytes": 18877,
+        "first_bytes": 15793,
+        "repeat_bytes": 3084,
+        "shell_bytes": 29254,
+        "seconds": 103.5,
+        "events_sha256": "a6c2a2eebf627d3004e5dc2e166edecb0f5e5b8ae482c9e9faa6c19f2927e322",
+        "browser": {
+          "pass": 24,
+          "total": 24,
+          "result_sha256": "a9fb9081b076b43fbfce97c76a9d210137f3cb9d93cb220c676399e11e574e94"
+        },
+        "prompt_sha256": "3333192676bfb2d38aae810b20a40946ecf6cd5d85347eef5494df7ecfe9c2e8",
+        "reads": [
+          {
+            "id": "item_1",
+            "path_bytes": {
+              "documents/rulers/AGENTS.md": 1987
+            }
+          },
+          {
+            "id": "item_3",
+            "path_bytes": {
+              "Context": 574
+            }
+          },
+          {
+            "id": "item_4",
+            "path_bytes": {
+              "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+              "documents/rulers/core/WORKFLOW.md": 1724,
+              "documents/rulers/frontend/app/INDEX.md": 503,
+              "documents/rulers/frontend/INDEX.md": 809,
+              "documents/rulers/PROJECT_PROFILE.md": 736
+            }
+          },
+          {
+            "id": "item_5",
+            "path_bytes": {
+              "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+              "documents/rulers/core/WORKFLOW.md": 1724,
+              "documents/rulers/frontend/INDEX.md": 46,
+              "documents/rulers/frontend/web/design/VISUAL_SYSTEM.md": 1325,
+              "documents/rulers/frontend/web/design/ACCESSIBILITY.md": 1320,
+              "documents/rulers/frontend/web/design/COMPONENT_PATTERNS.md": 1163,
+              "documents/rulers/frontend/web/develop/STATE_MANAGEMENT.md": 1253,
+              "documents/rulers/frontend/web/develop/TESTING.md": 1097,
+              "documents/rulers/frontend/common/DESIGN_TOKENS.md": 1192,
+              "documents/rulers/frontend/web/design/INDEX.md": 57,
+              "documents/rulers/frontend/web/develop/INDEX.md": 1289,
+              "documents/rulers/frontend/common/INDEX.md": 53,
+              "documents/rulers/frontend/web/INDEX.md": 50,
+              "documents/rulers/PROJECT_PROFILE.md": 653
+            }
+          }
+        ],
+        "separately_verified_filtered_fragments": []
+      },
+      {
+        "id": "w3",
+        "variant": "candidate",
+        "task": "keyboard",
+        "rule_bytes": 11866,
+        "first_bytes": 11866,
+        "repeat_bytes": 0,
+        "shell_bytes": 22713,
+        "seconds": 127.5,
+        "events_sha256": "5c0b24848a52ab7c7c450f5a86b0e5f6350f4588276f4348527c82aa735fa6d4",
+        "browser": {
+          "pass": 16,
+          "total": 16,
+          "result_sha256": "ae099e2cf046200429acc8b8737b034dbde3a2fe2674ab287fe32e3e2fa9fb3f"
+        },
+        "prompt_sha256": "41514dee37211df6ef870f2933fca0772c911d69edb4ffec33f404d318ad71db",
+        "reads": [
+          {
+            "id": "item_2",
+            "path_bytes": {
+              "documents/rulers/AGENTS.md": 1987
+            }
+          },
+          {
+            "id": "item_4",
+            "path_bytes": {
+              "Context": 574
+            }
+          },
+          {
+            "id": "item_6",
+            "path_bytes": {
+              "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+              "documents/rulers/core/WORKFLOW.md": 1724,
+              "documents/rulers/frontend/INDEX.md": 46,
+              "documents/rulers/frontend/web/design/ACCESSIBILITY.md": 1320,
+              "documents/rulers/frontend/web/design/COMPONENT_PATTERNS.md": 1163,
+              "documents/rulers/frontend/web/develop/TESTING.md": 1097,
+              "documents/rulers/frontend/web/design/INDEX.md": 57,
+              "documents/rulers/frontend/common/DESIGN_TOKENS.md": 1192,
+              "documents/rulers/frontend/web/develop/INDEX.md": 1289,
+              "documents/rulers/frontend/web/INDEX.md": 50,
+              "documents/rulers/frontend/common/INDEX.md": 53,
+              "documents/rulers/PROJECT_PROFILE.md": 653
+            }
+          }
+        ],
+        "separately_verified_filtered_fragments": []
+      },
+      {
+        "id": "w4",
+        "variant": "default",
+        "task": "capacity",
+        "rule_bytes": 19426,
+        "first_bytes": 16206,
+        "repeat_bytes": 3220,
+        "shell_bytes": 28601,
+        "seconds": 173.6,
+        "events_sha256": "e6590f68777ba0e0f897beb2e9f3ba551f6e9e5be14501e3717e0eefd3eb1970",
+        "browser": {
+          "pass": 24,
+          "total": 24,
+          "result_sha256": "a9fb9081b076b43fbfce97c76a9d210137f3cb9d93cb220c676399e11e574e94"
+        },
+        "prompt_sha256": "3333192676bfb2d38aae810b20a40946ecf6cd5d85347eef5494df7ecfe9c2e8",
+        "reads": [
+          {
+            "id": "item_2",
+            "path_bytes": {
+              "documents/rulers/AGENTS.md": 1987
+            }
+          },
+          {
+            "id": "item_3",
+            "path_bytes": {
+              "Context": 574
+            }
+          },
+          {
+            "id": "item_5",
+            "path_bytes": {
+              "documents/rulers/frontend/web/develop/INDEX.md": 1231,
+              "documents/rulers/frontend/web/design/INDEX.md": 1067,
+              "documents/rulers/frontend/web/INDEX.md": 757
+            }
+          },
+          {
+            "id": "item_6",
+            "path_bytes": {
+              "documents/rulers/core/HARD_CONSTRAINTS.md": 661,
+              "documents/rulers/core/WORKFLOW.md": 1724,
+              "documents/rulers/frontend/INDEX.md": 809,
+              "documents/rulers/frontend/web/design/VISUAL_SYSTEM.md": 1325,
+              "documents/rulers/frontend/web/design/COMPONENT_PATTERNS.md": 1163,
+              "documents/rulers/frontend/web/develop/TESTING.md": 1097,
+              "documents/rulers/frontend/web/develop/STATE_MANAGEMENT.md": 1253,
+              "documents/rulers/frontend/web/design/INDEX.md": 1124,
+              "documents/rulers/frontend/common/DESIGN_TOKENS.md": 1192,
+              "documents/rulers/frontend/web/develop/INDEX.md": 1289,
+              "documents/rulers/frontend/web/INDEX.md": 807,
+              "documents/rulers/frontend/common/INDEX.md": 713,
+              "documents/rulers/PROJECT_PROFILE.md": 653
+            }
+          }
+        ],
+        "separately_verified_filtered_fragments": []
+      }
+    ],
+    "final_distribution": {
+      "sha256": "05b71b5ab48a37bf0b8abd7b9ebc01ca58cc4ad61dc5cdeb3b222b27e7cd8112",
+      "package_members": 114,
+      "reproducible": true,
+      "matching_observed_calls": 10,
+      "distinct_variant_selections": 8,
+      "filtered_call_checked": 1,
+      "eligible_index_checks": {
+        "stock_implicit_indexes_paths_only": true,
+        "stock_dependencies_keep_text": true,
+        "explicit_common_index_0": true,
+        "explicit_common_index_1": true,
+        "domain_only_discovery_full": true,
+        "only_order_changed_kept_verbatim": true,
+        "custom_policy_kept_verbatim": true,
+        "other_approved_default_still_condensed": true,
+        "business_rules_and_profile_still_identical": true,
+        "unreviewed_manual_edit_rejected": true
+      },
+      "event_parity_sha256": "e3ec2f6750e76a4055a6a9db05a156f02455683830d596d3873f0dc032da8090"
+    }
+  }
+}

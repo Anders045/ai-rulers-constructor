@@ -44,7 +44,7 @@ def classify_state_schema(
     return "unsupported"
 
 
-def _domain_state(
+def create_domain_state(
     *,
     detected: bool,
     config: Mapping[str, Any],
@@ -72,21 +72,22 @@ def create_initial_state(
     rulers_dir: str,
     policy_id: str,
     detected_domains: list[str] | tuple[str, ...] = (),
+    skill_root: Path | None = None,
 ) -> dict[str, Any]:
-    registry = load_domain_registry(Path(__file__).resolve().parents[2])
+    registry = load_domain_registry(skill_root or Path(__file__).resolve().parents[2])
     detected = set(detected_domains)
     unknown = sorted(detected - registry.keys())
     if unknown:
         raise ValueError("Unknown detected domain: " + ", ".join(unknown))
     domains: dict[str, Any] = {
-        "core": _domain_state(
+        "core": create_domain_state(
             detected=True,
             generated=True,
             config=registry["core"],
         )
     }
     for domain in sorted(detected - {"core"}):
-        domains[domain] = _domain_state(
+        domains[domain] = create_domain_state(
             detected=True,
             config=registry[domain],
         )

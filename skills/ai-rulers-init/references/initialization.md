@@ -60,6 +60,8 @@ observed / approved 记录。主工程负责组合约束，子工程负责可移
 只填写需要变化的项目/字段；已有有效内容会复用。export_manifest 沿用 module-workflows
 的显式导出契约。候选画像或领域文件不应直接写入已安装规则目录。
 
+同一工程本批采纳的领域可以通过普通 Markdown 链接互相导航，计划按这批候选应用后的文件集合检查引用。目标确实缺失时，按诊断中的来源与目标路径修正候选。必读关系仍决定激活顺序。已有工程第一次接入某个领域时，以当前 registry 的领域定义建立记录。
+
 生产相关规则及准备流程已经纳入本次适用性审阅时，可在对应 project 中增加
 `"readiness": {"delivery": ".rulers-work/candidates/delivery-readiness.json"}`。
 readiness 只能指向同一 project 中显式提供的 domains 候选；来源文件路径仍相对主工程 ROOT。

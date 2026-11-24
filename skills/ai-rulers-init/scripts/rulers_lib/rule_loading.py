@@ -42,34 +42,41 @@ def resolve_reference(layout, source: Path, value: str) -> Path | None:
     return target
 
 
-def references(text):
+def references(text, *, index=False):
     from .validation import FENCED_YAML_RE, _metadata_list
     match = FENCED_YAML_RE.search(text)
     dependencies = _metadata_list(match.group(1), "must_load_with") or [] if match else []
     links = re.findall(r"\[[^\]]*\]\(([^)]+)\)", text)
+    if index:
+        links.extend(re.findall(r"`([^`\n]+\.md(?:#[^`\n]*)?)`", text))
     return dependencies, links
 
 
 def index_links(text):
-    _, links = references(text)
-    return links + re.findall(r"`([^`\n]+\.md(?:#[^`\n]*)?)`", text)
+    return references(text, index=True)[1]
 
 
-def validate_links(layout, *, paths):
+def validate_references(layout, source, values, exists=Path.is_file):
+    relative = source.relative_to(layout.project_root).as_posix()
+    issues = []
+    for value in values:
+        try:
+            target = resolve_reference(layout, source, value)
+            if target is not None and not exists(target):
+                raise ValueError(f"Missing rule reference: {relative} -> {value}")
+        except ValueError as exc:
+            issues.append(ValidationIssue("VR107", str(exc), relative))
+    return issues
+
+
+def validate_links(layout, *, paths, navigation_exists=Path.is_file):
     issues = []
     for relative in paths:
         source = resolve_safe_child(layout.project_root, relative)
         text = source.read_text(encoding="utf-8")
-        dependencies, links = references(text)
-        if source.name == "INDEX.md":
-            links = index_links(text)
-        for value in dependencies + links:
-            try:
-                target = resolve_reference(layout, source, value)
-                if target is not None and not target.is_file():
-                    raise ValueError(f"Missing rule reference: {relative} -> {value}")
-            except ValueError as exc:
-                issues.append(ValidationIssue("VR107", str(exc), relative))
+        dependencies, links = references(text, index=source.name == "INDEX.md")
+        issues.extend(validate_references(layout, source, dependencies))
+        issues.extend(validate_references(layout, source, links, navigation_exists))
     return issues
 
 

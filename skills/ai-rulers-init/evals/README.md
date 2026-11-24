@@ -51,6 +51,12 @@ managed-worktree工具时保留未覆盖项；shell detached 和CLI结果不能�
 并列重复路径；未提供则为未测。`scripts.report_task_budgets` 检查七类模板正文任务的完整加载链，
 包括分隔标记；这是结构预算，不是模型正确率。
 
+## Web 索引呈现对照
+
+从开发仓库运行 `python3 -m scripts.prepare_web_loading_replay --skill SKILL --target NEW_TARGET --task focus --prompt NEW_PROMPT`，再用现有 `scripts.run_interop_replay` 执行自然任务。`--task theme` 生成相邻的组件主题任务。在新的目标上增加 `--candidate` 可试验仅保留已核实纯导航索引路径的加载器。候选在临时 Skill 副本中生成。相同任务的基线和候选使用相同模型、权限和推理设置，每次从干净输入开始。
+
+用 `node scripts/verify_web_loading_replay.cjs focus TARGET` 或 `theme TARGET` 在独立 Chromium 中检查产物。运行验证的开发环境需要 Playwright 及其 Chromium，可通过 `CHROMIUM_EXECUTABLE_PATH` 指定已有浏览器。用 `python3 -m scripts.measure_web_loading_replay --target TARGET --evidence EVIDENCE` 统计公开事件中实际出现的规则文本。宿主开销、部分文本及浏览器输出应按报告口径另行说明。[首批验收与实测](../../../docs/validation/2026-11-24-first-batch-acceptance.md)
+
 ## 原始证据与连续维护
 
 `python3 -m scripts.prepare_rule_quality_replay --skill ABS --target NEW_ABS --scenario minimal|boundary|conflict|greenfield|maintenance --evidence NEW_ABS`

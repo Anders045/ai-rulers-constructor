@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 
+from .domains import DependencyContractError
 from .module_contracts import checked_path, file_identity, read_json, json_bytes
 from .module_registry import registration_plan
 from .module_sync import sync_plan, apply_sync
@@ -186,21 +187,33 @@ def prepare_project(
             "--evidence",
             batch_id,
         )
-    from .domains import load_domain_registry, effective_domain_configs, effective_dependency_configs, rule_owner
+    from .domains import load_domain_registry, effective_domain_configs, effective_dependency_configs, nested_domain_dirs, rule_owner
+    from .domain_lifecycle import activate_domain
     from .paths import resolve_layout
+    from .rule_loading import references, validate_references
+    from .rule_maintenance import plan_rules_change, apply_rules_change, validate_nested_copies
     import copy
 
     registry = load_domain_registry(skill_root)
     projected = copy.deepcopy(state)
     overrides = {}
     configs = effective_domain_configs(registry, state)
-    for domain, candidate in settings.get("domains", {}).items():
+    candidates = settings.get("domains", {})
+    layout = resolve_layout(root, rulers_dir)
+    for domain, candidate in candidates.items():
         if domain not in registry:
             raise ValueError(f"Unknown candidate domain: {domain}")
         value = projected["domains"].setdefault(domain, dict(configs[domain]))
         value.update(generated=True, target_dir=configs[domain]["target_dir"], required_files=[])
-        for source in sorted(checked_path(root, candidate).rglob("*.md")):
-            filename = source.relative_to(root / candidate).as_posix()
+        candidate_dir = checked_path(root, candidate)
+        target_dir = checked_path(layout.rulers_root, value["target_dir"])
+        # The disposable parent candidate may carry the original child tree.
+        # Only the child's own candidate can supply changes to that tree.
+        for copied in validate_nested_copies(candidate_dir, target_dir, nested_domain_dirs(domain, configs)):
+            if copied.is_dir():
+                shutil.rmtree(copied)
+        for source in sorted(candidate_dir.rglob("*.md")):
+            filename = source.relative_to(candidate_dir).as_posix()
             relative = value["target_dir"] + "/" + filename
             if rule_owner(relative, configs) != domain:
                 continue
@@ -208,41 +221,66 @@ def prepare_project(
             value["required_files"].append(filename)
             projected.setdefault("managed_files", {})[path] = {"ownership": "managed"}
             overrides[path] = source.read_text(encoding="utf-8")
-    dependencies = effective_dependency_configs(registry, projected, resolve_layout(root, rulers_dir),
-                                                rule_text_overrides=overrides)
+    dependencies = effective_dependency_configs(registry, projected, layout, rule_text_overrides=overrides)
+
+    def navigation_exists(target):
+        if target.is_relative_to(layout.rulers_root):
+            relative = target.relative_to(layout.rulers_root).as_posix()
+            if rule_owner(relative, configs) in candidates:
+                return target.relative_to(root).as_posix() in overrides
+        return target.is_file()
+
+    missing = []
+    for path, text in overrides.items():
+        source = root / path
+        _, links = references(text, index=source.name == "INDEX.md")
+        missing.extend(validate_references(layout, source, links, navigation_exists))
+    if missing:
+        raise ValueError("Rule validation failed: " + "; ".join(f"{i.code} {i.message}" for i in missing))
     ordered = []
 
     def include(domain):
         if domain in ordered:
             return
         for dependency in dependencies[domain]["requires_active"]:
-            if dependency in settings.get("domains", {}):
+            if dependency in candidates:
                 include(dependency)
         ordered.append(domain)
 
-    for domain in settings.get("domains", {}):
+    for domain in candidates:
         include(domain)
-    for domain in ordered:
-        candidate = settings["domains"][domain]
-        from .rule_maintenance import plan_rules_change, apply_rules_change
-        from .domain_lifecycle import activate_domain
 
+    def reference_issues():
+        from .validation import inspect_project
+
+        inspection = inspect_project(project_root=root, rulers_dir=rulers_dir)
+        return [issue for issue in inspection.issues if issue.code == "VR107"]
+
+    existing_issues = set(reference_issues()) if ordered else set()
+    # Ordinary links may point at another candidate in this disposable project.
+    # Activation sees only the actual files after every candidate has been adopted.
+    for domain in ordered:
         plan = plan_rules_change(
             skill_root=skill_root,
             project_root=root,
             rulers_dir=rulers_dir,
             domain=domain,
-            candidate_dir=candidate,
+            candidate_dir=candidates[domain],
             reason="Reviewed initialization candidate",
         )
-        changed = apply_rules_change(
-            plan=plan, skill_root=skill_root, reviewed_by=REVIEWER, evidence=batch_id
+        apply_rules_change(
+            plan=plan, skill_root=skill_root, reviewed_by=REVIEWER, evidence=batch_id,
+            _navigation_exists=navigation_exists,
         )
+    if ordered:
+        # A deletion can break a retained rule outside the candidate domains.
+        broken = [issue for issue in reference_issues()
+                  if issue.scope in ordered or issue not in existing_issues]
+        if broken:
+            raise ValueError("Rule validation failed: " + "; ".join(f"{i.code} {i.message}" for i in broken))
+    for domain in ordered:
         state = read_json(state_path)
-        if (
-            changed["changed_files"]
-            or state["domains"][domain].get("review_status") != "reviewed"
-        ):
+        if state["domains"][domain].get("review_status") != "reviewed":
             activate_domain(
                 skill_root=skill_root,
                 project_root=root,
@@ -255,11 +293,10 @@ def prepare_project(
     # remains the outer review and is materialized by the existing batch pipeline.
     for domain, source in sorted(settings.get("readiness", {}).items()):
         from .readiness import compile_readiness
-        from .domain_lifecycle import activate_domain
 
         state = read_json(state_path)
         declaration = compile_readiness(
-            resolve_layout(root, rulers_dir), state, domain,
+            layout, state, domain,
             read_json(checked_path(root, source, required=True)),
         )
         domain_state = state["domains"][domain]
@@ -371,10 +408,13 @@ def project_batch(*, skill_root, root, discovery, settings, review, batch_id):
                 if name != root_scope:
                     eligible.append(name)
             except (ValueError, KeyError, RuntimeError) as exc:
+                reason = str(exc)
+                if isinstance(exc, DependencyContractError) and exc.path:
+                    reason = f"{exc.path}: {reason}"
                 pending.append(
                     {
                         "scope": name,
-                        "reason": str(exc).replace(str(preview), "<workspace>"),
+                        "reason": reason.replace(str(preview), "<workspace>"),
                     }
                 )
                 # A failed rehearsal must not leak partial changes into the review.

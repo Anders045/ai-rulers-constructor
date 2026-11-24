@@ -189,10 +189,11 @@ def apply_plan_unified(
     reviewed_at: str | None = None,
 ) -> dict[str, Any]:
     import copy
+    from .domains import load_domain_registry
     from .plans import canonical_plan_sha256, validate_plan, _tree_fingerprint
     from .runtime_files import runtime_files, retired_runtime_files
     from .mutations import mutation
-    from .state import create_initial_state, state_json, text_sha256
+    from .state import create_domain_state, create_initial_state, state_json, text_sha256
     from .policies import load_policy
     from .validation import validate_project
     from .transactions import ReplaceAction, DeleteAction, restore_transaction
@@ -247,7 +248,7 @@ def apply_plan_unified(
     timestamp = reviewed_at or datetime.now(timezone.utc).isoformat(timespec="seconds")
     policy = plan["preconditions"]["policy"]
     state = copy.deepcopy(current) if current else create_initial_state(
-        rulers_dir=layout.rulers_dir, policy_id=policy["id"],
+        skill_root=skill_root, rulers_dir=layout.rulers_dir, policy_id=policy["id"],
         detected_domains=[d for d in plan["domain_actions"] if d != "core"],
     )
     writes: dict[str, bytes] = {}
@@ -276,7 +277,7 @@ def apply_plan_unified(
                 writes[profile_relative] = resolve_safe_child(project_root, candidate["path"]).read_bytes()
             state["phase"] = "profile_draft"
         elif operation == "upgrade":
-            from .domains import effective_domain_configs, load_domain_registry
+            from .domains import effective_domain_configs
             configs = effective_domain_configs(load_domain_registry(skill_root), state)
             for domain, value in state["domains"].items():
                 value["requires_active"] = list(configs[domain]["requires_active"])
@@ -303,6 +304,7 @@ def apply_plan_unified(
             else:
                 state["phase"] = plan["expected_phase"]
     elif operation == "reconcile":
+        registry = load_domain_registry(skill_root)
         candidate = plan.get("candidate_profile")
         if candidate:
             content = resolve_safe_child(project_root, candidate["path"]).read_bytes()
@@ -313,11 +315,11 @@ def apply_plan_unified(
                 "review": {"reviewed_by": reviewed_by, "reviewed_at": timestamp, "evidence": evidence}}
             state["domains"]["core"].update(level=1, review_status="reviewed", review=state["profile"]["review"])
         for domain, action in plan["domain_actions"].items():
-            if action == "keep":
+            if action == "keep" or domain == "core":
                 continue
-            value = state["domains"].setdefault(domain, {"target_dir": domain, "required_files": ["INDEX.md"]})
-            if domain == "core":
-                continue
+            if domain not in state["domains"]:
+                state["domains"][domain] = create_domain_state(config=registry[domain], detected=action == "draft")
+            value = state["domains"][domain]
             value.update(level=0, review_status="draft", level3_ready=False)
             if action == "retire":
                 value["retired"] = True
@@ -343,7 +345,7 @@ def apply_plan_unified(
                 # Preserve drift checks, but record project provenance for upgrades.
                 inventory[path]["project_owned"] = True
                 from .validation import _scope_for_managed_path
-                from .domains import load_domain_registry, expand_reverse_dependencies, effective_dependency_configs
+                from .domains import expand_reverse_dependencies, effective_dependency_configs
                 scope = _scope_for_managed_path(path, state)
                 if scope not in {None, "core", "entry", "profile"}:
                     configs = effective_dependency_configs(load_domain_registry(skill_root), state, layout)

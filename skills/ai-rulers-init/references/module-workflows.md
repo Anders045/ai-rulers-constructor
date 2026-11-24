@@ -128,7 +128,8 @@ python3 ROOT/RULERS_DIR/scripts/validate_rulers.py --mode load --project-root RO
 
 跨模块时重复 `--module`；叶子可用 `server:backend/ARCHITECTURE.md` 限定身份。
 主工程组合规则另用 `--workspace-domain`／`--workspace-rule`。主 core 只加载一次；
-所选模块画像按领域投影。验证命令输出 cwd 已映射到各代码根，执行前仍检查任务授权。
+每个模块从自己的已采纳快照提供核心领域、所选领域和沿必读关系实际加载的领域中全部已导出的画像事实。普通导航链接只供继续查找。验证命令输出 cwd 已映射到各代码根，执行前仍检查任务授权。
+只给 `--rule` 时，每个模块按本模块匹配规则的所属领域加载。省略领域和规则时可发现该模块的全部导出领域。
 Context 超预算或 blocked 时收窄选择／诊断；脚本仅核验已采纳快照、Git 绑定及显式
 相关代码证据，不扫描子工程规则更新。子工程独立入口沿用其自己的激活门禁。
 
